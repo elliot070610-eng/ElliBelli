@@ -1,77 +1,90 @@
-body {
-  text-align: center;
-  font-family: Arial, sans-serif;
-  animation: bgFlash 2s infinite;
+body{
+text-align:center;
+font-family:Arial;
+animation:bg 1s infinite;
 }
 
-@keyframes bgFlash {
-  0% { background: #ffffff; }
-  25% { background: #ffb6c1; }
-  50% { background: #b0e0e6; }
-  75% { background: #98fb98; }
-  100% { background: #ffffff; }
+@keyframes bg{
+0%{background:red;}
+25%{background:yellow;}
+50%{background:cyan;}
+75%{background:lime;}
+100%{background:red;}
 }
 
-h1 {
-  font-size: 48px;
+#scoreBox{
+font-size:30px;
+font-weight:bold;
+animation:rainbow 2s linear infinite;
 }
 
-#timer {
-  color: red;
-  font-size: 28px;
+@keyframes rainbow{
+0%{color:red;}
+20%{color:orange;}
+40%{color:yellow;}
+60%{color:lime;}
+80%{color:cyan;}
+100%{color:magenta;}
 }
 
-#gameArea {
-  position: relative;
-  width: 100%;
-  height: 400px;
-  overflow: hidden;
+#gameArea{
+height:400px;
+position:relative;
 }
 
-.brainrot {
-  position: absolute;
-  font-size: 40px;
-  cursor: pointer;
-  animation: blink 1s infinite;
+.brainrot{
+position:absolute;
+font-size:40px;
+cursor:pointer;
+animation:blink 1s infinite;
 }
 
-.evil {
-  color: red;
-  animation: shake 0.2s infinite, blink 0.5s infinite;
+.boss{
+font-size:70px;
+color:red;
 }
 
-@keyframes shake {
-  0% { transform: translate(0,0); }
-  25% { transform: translate(3px,3px); }
-  50% { transform: translate(-3px,-3px); }
-  75% { transform: translate(3px,-3px); }
-  100% { transform: translate(0,0); }
+@keyframes blink{
+50%{opacity:0.3;}
 }
 
-@keyframes blink {
-  0%,100% { opacity:1; }
-  50% { opacity:0.3; }
+#leaderboard{
+display:none;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:white;
+padding:20px;
+z-index:999;
 }
 
-.voiceLine {
-  position:absolute;
-  font-size:20px;
-  color:purple;
-  font-weight:bold;
-  pointer-events:none;
+#leaderboard li:nth-child(1){color:gold;}
+#leaderboard li:nth-child(2){color:silver;}
+#leaderboard li:nth-child(3){color:#cd7f32;}
+
+#gameOver{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+color:white;
+justify-content:center;
+align-items:center;
+flex-direction:column;
 }
 
-#gameOver {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:black;
-  color:white;
-  display:none;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index:999;
+#nameScreen{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:black;
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
 }
