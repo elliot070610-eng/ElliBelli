@@ -2,6 +2,7 @@ body {
   background: white;
   text-align: center;
   font-family: Arial, sans-serif;
+  transition: background-color 0.5s; /* Glidende farveskift */
 }
 
 h1 {
@@ -26,11 +27,12 @@ h1 {
   font-size: 40px;
   cursor: pointer;
   user-select: none;
+  animation: blink 1s infinite;
 }
 
 .evil {
   color: red;
-  animation: shake 0.2s infinite;
+  animation: shake 0.2s infinite, blink 1s infinite;
 }
 
 @keyframes shake {
@@ -39,6 +41,11 @@ h1 {
   50% { transform: translate(-2px,-2px); }
   75% { transform: translate(2px,-2px); }
   100% { transform: translate(0,0); }
+}
+
+@keyframes blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0.5; }
 }
 
 /* Voice line style */
