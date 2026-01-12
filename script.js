@@ -93,7 +93,7 @@ function spawnBrainrot() {
 
     // Background color change based on score
     const colors = ["#ffffff", "#f0f8ff", "#ffe4e1", "#fafad2", "#d3ffce"];
-    document.body.style.backgroundColor = colors[Math.floor(score/10) % colors.length];
+    document.body.style.backgroundColor = colors[Math.floor(score / 10) % colors.length];
 
     // Remove brainrot
     brainrot.remove();
