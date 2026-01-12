@@ -7,7 +7,7 @@ const firebaseConfig = {
   authDomain: "ellibelligame.firebaseapp.com",
   databaseURL: "https://ellibelligame-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "ellibelligame",
-  storageBucket: "ellibelligame.firebasedatabase.app",
+  storageBucket: "ellibelligame.firebasestorage.app",
   messagingSenderId: "90652680256",
   appId: "1:90652680256:web:64d24715523b3601567fa5"
 };
@@ -79,6 +79,7 @@ function spawnBrainrot(){
     if(activeBrainrots < 3 && timerStarted){
       clearInterval(countdownInterval);
       timerStarted = false;
+      scoreText.innerText = `Score: ${score}`;
     }
   };
 
