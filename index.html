@@ -1,81 +1,44 @@
-body{
-text-align:center;
-font-family:Arial;
-background:black;
-color:white;
-transition: transform 0.1s;
-}
+<!DOCTYPE html>
+<html>
+<head>
+<title>ElliBelli</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-#scoreBox{
-font-size:30px;
-font-weight:bold;
-animation:rainbow 2s linear infinite;
-}
+<div id="nameScreen">
+  <h1>Enter Player Name</h1>
+  <input id="playerNameInput" placeholder="Your name">
+  <button id="startBtn">Start Game</button>
+</div>
 
-@keyframes rainbow{
-0%{color:red;}
-20%{color:orange;}
-40%{color:yellow;}
-60%{color:lime;}
-80%{color:cyan;}
-100%{color:magenta;}
-}
+<div id="gameUI" style="display:none;">
+  <h1>ElliBelli 🧠</h1>
+  <div id="scoreBox">Score: <span id="score">0</span></div>
+  <button id="leaderboardBtn">🏆</button>
 
-#gameArea{
-height:400px;
-position:relative;
-overflow:hidden;
-}
+  <div id="gameArea"></div>
 
-.brainrot{
-position:absolute;
-font-size:40px;
-cursor:pointer;
-}
+  <div id="leaderboard">
+    <h2>Global Top 10</h2>
+    <ol id="leaderList"></ol>
+    <button id="closeLB">Close</button>
+  </div>
 
-.boss{
-font-size:70px;
-color:red;
-}
+  <div id="gameOver">
+    <h1>Brother Noah du blev slimed 😈</h1>
+    <button id="restartBtn">Restart</button>
+  </div>
+</div>
 
-.particle{
-position:absolute;
-width:8px;
-height:8px;
-border-radius:50%;
-pointer-events:none;
-}
+<audio id="bgMusic" loop>
+  <source src="skibidi.mp3">
+</audio>
 
-#leaderboard{
-display:none;
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:white;
-color:black;
-padding:20px;
-z-index:999;
-}
+<audio id="clickSound">
+  <source src="mouse_click.mp3">
+</audio>
 
-#leaderboard li:nth-child(1){color:gold;}
-#leaderboard li:nth-child(2){color:silver;}
-#leaderboard li:nth-child(3){color:#cd7f32;}
-
-#nameScreen{
-position:fixed;
-top:0;left:0;width:100%;height:100%;
-background:black;color:white;
-display:flex;flex-direction:column;
-justify-content:center;align-items:center;
-}
-
-#gameOver{
-display:none;
-position:fixed;
-top:0;left:0;width:100%;height:100%;
-background:black;color:white;
-display:flex;
-justify-content:center;align-items:center;
-flex-direction:column;
-}
+<script type="module" src="script.js"></script>
+</body>
+</html>
