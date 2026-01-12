@@ -1,34 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ElliBelli Extreme Auto</title>
+  <title>ElliBelli Extreme</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>ElliBelli Extreme 🧠</h1>
-  <p>Brainrots spawner automatisk!</p>
+<h1>ElliBelli Extreme 🧠</h1>
+<h2>Score: <span id="score">0</span></h2>
+<h2 id="timer">Timer: --</h2>
 
-  <h2>Score: <span id="score">0</span></h2>
+<div id="gameArea"></div>
 
-  <div id="gameArea"></div>
+<div id="gameOver">
+  <h1>Brother Noah du blev slimed 😈</h1>
+  <button id="restartBtn">Restart</button>
+</div>
 
-  <!-- Game Over Screen -->
-  <div id="gameOver" style="display:none;">
-    <h1>Brother Noah du blev slimed 😈</h1>
-    <button id="restartBtn">Restart</button>
-  </div>
+<audio id="bgMusic" loop>
+  <source src="skibidi.mp3" type="audio/mpeg">
+</audio>
 
-  <!-- Background music -->
-  <audio id="bgMusic" loop>
-    <source src="skibidi.mp3" type="audio/mpeg">
-  </audio>
+<audio id="clickSound">
+  <source src="mouse_click.mp3" type="audio/mpeg">
+</audio>
 
-  <!-- Click sound -->
-  <audio id="clickSound">
-    <source src="mouse_click.mp3" type="audio/mpeg">
-  </audio>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
