@@ -1,29 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ElliBelli Extreme</title>
-  <link rel="stylesheet" href="style.css">
+<title>ElliBelli</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>ElliBelli Extreme 🧠</h1>
-<h2>Score: <span id="score">0</span></h2>
-<h2 id="timer">Timer: --</h2>
+<div id="nameScreen">
+  <h1>Enter Player Name</h1>
+  <input id="playerNameInput" placeholder="Your name">
+  <button id="startBtn">Start Game</button>
+</div>
 
-<div id="gameArea"></div>
+<div id="gameUI" style="display:none;">
+  <h1>ElliBelli 🧠</h1>
 
-<div id="gameOver">
-  <h1>Brother Noah du blev slimed 😈</h1>
-  <button id="restartBtn">Restart</button>
+  <div id="scoreBox">Score: <span id="score">0</span></div>
+
+  <button id="leaderboardBtn">🏆</button>
+
+  <div id="gameArea"></div>
+
+  <div id="leaderboard">
+    <h2>Global Top 10</h2>
+    <ol id="leaderList"></ol>
+    <button id="closeLB">Close</button>
+  </div>
+
+  <div id="gameOver">
+    <h1>Brother Noah du blev slimed 😈</h1>
+    <button id="restartBtn">Restart</button>
+  </div>
 </div>
 
 <audio id="bgMusic" loop>
-  <source src="skibidi.mp3" type="audio/mpeg">
+  <source src="skibidi.mp3">
 </audio>
 
 <audio id="clickSound">
-  <source src="mouse_click.mp3" type="audio/mpeg">
+  <source src="mouse_click.mp3">
 </audio>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script src="script.js"></script>
 </body>
