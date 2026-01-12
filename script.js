@@ -1,130 +1,147 @@
-const brainrots = ["🧌 Skibidi","😈 Ohio","🤡 Fanum","👁️ Gyatt","🐺 Alpha","🔥 Rizzler","💀 Nah","👹 Grimace","🦍 Sigma"];
-const voiceLines = ["brr brr skibidi","GYATT","nah bro","fanum taxed","sigma moment"];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-const gameArea = document.getElementById("gameArea");
-const scoreText = document.getElementById("score");
-const timerText = document.getElementById("timer");
-const music = document.getElementById("bgMusic");
-const clickSound = document.getElementById("clickSound");
-const gameOverScreen = document.getElementById("gameOver");
-const restartBtn = document.getElementById("restartBtn");
+// 🔥 Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyD4a5ennKqkdpq2b-pHp5zVySk7XKq_pBM",
+  authDomain: "ellibelligame.firebaseapp.com",
+  databaseURL: "https://ellibelligame-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "ellibelligame",
+  storageBucket: "ellibelligame.firebasestorage.app",
+  messagingSenderId: "90652680256",
+  appId: "1:90652680256:web:64d24715523b3601567fa5"
+};
 
-let score = 0;
-let spawnInterval = 2000;
-let spawnTimer;
-let countdown = 10;
-let countdownTimer = null;
-let activeBrainrots = [];
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-// Musik starter ved første klik på siden
-document.body.addEventListener("click", () => {
-  if(music.paused) music.play();
-},{once:true});
+// UI
+const gameArea=document.getElementById("gameArea");
+const scoreText=document.getElementById("score");
+const leaderboardBtn=document.getElementById("leaderboardBtn");
+const leaderboard=document.getElementById("leaderboard");
+const leaderList=document.getElementById("leaderList");
+const closeLB=document.getElementById("closeLB");
+const gameOver=document.getElementById("gameOver");
+const restartBtn=document.getElementById("restartBtn");
 
-// Spawn loop
-function startSpawning(){
-  spawnTimer = setInterval(()=>{
-    spawnBrainrot();
-    if(spawnInterval > 400){
-      spawnInterval -= 20;
-      clearInterval(spawnTimer);
-      startSpawning();
-    }
-  }, spawnInterval);
+const nameScreen=document.getElementById("nameScreen");
+const gameUI=document.getElementById("gameUI");
+const startBtn=document.getElementById("startBtn");
+const nameInput=document.getElementById("playerNameInput");
+
+const music=document.getElementById("bgMusic");
+const clickSound=document.getElementById("clickSound");
+
+let score=0;
+let playerName="";
+
+startBtn.onclick=()=>{
+  if(nameInput.value.trim()=="") return;
+  playerName=nameInput.value;
+  nameScreen.style.display="none";
+  gameUI.style.display="block";
+  music.play();
+  startGame();
+};
+
+function startGame(){
+  setInterval(spawnBrainrot,1000);
+  setTimeout(endGame,30000);
 }
 
 function spawnBrainrot(){
-  const b = document.createElement("div");
-  b.className = "brainrot";
+  let b=document.createElement("div");
+  let boss=Math.random()<0.05;
+  b.className=boss?"brainrot boss":"brainrot";
+  b.innerText=boss?"👹":"🧠";
 
-  const txt = brainrots[Math.floor(Math.random()*brainrots.length)];
-  b.innerText = txt;
+  let x=Math.random()*(gameArea.clientWidth-80);
+  let y=Math.random()*(gameArea.clientHeight-80);
+  b.style.left=x+"px";
+  b.style.top=y+"px";
 
-  let x = Math.random()*(gameArea.clientWidth-120);
-  let y = Math.random()*(gameArea.clientHeight-60);
-  b.style.left = x+"px";
-  b.style.top = y+"px";
-
-  const isEvil = Math.random()<0.05;
-  if(isEvil){
-    b.classList.add("evil");
-    b.innerText = "😈 EVIL "+txt;
-  }
-
-  let dx=(Math.random()<0.5?-1:1)*(1+Math.random());
-  let dy=(Math.random()<0.5?-1:1)*(1+Math.random());
-  let rot=0;
-
-  function move(){
-    x+=dx; y+=dy; rot+=dx*2;
-    if(x<0||x>gameArea.clientWidth-120) dx*=-1;
-    if(y<0||y>gameArea.clientHeight-60) dy*=-1;
-    b.style.left=x+"px";
-    b.style.top=y+"px";
-    b.style.transform=`rotate(${rot}deg)`;
-    requestAnimationFrame(move);
-  }
-  move();
-
-  b.onclick=function(){
+  b.onclick=()=>{
     clickSound.currentTime=0;
     clickSound.play();
-
-    const v=document.createElement("div");
-    v.className="voiceLine";
-    v.innerText=voiceLines[Math.floor(Math.random()*voiceLines.length)];
-    v.style.left=x+"px";
-    v.style.top=(y-25)+"px";
-    gameArea.appendChild(v);
-    setTimeout(()=>v.remove(),1000);
-
-    score+=isEvil?10:5;
+    score+=boss?50:5;
     scoreText.innerText=score;
 
-    b.remove();
-    activeBrainrots=activeBrainrots.filter(o=>o!==b);
+    spawnParticles(x+20,y+20, boss?20:10);
+    if(boss) screenshake();
 
-    if(activeBrainrots.length<=3) stopCountdown();
+    b.remove();
   };
 
   gameArea.appendChild(b);
-  activeBrainrots.push(b);
+}
 
-  if(activeBrainrots.length>3 && countdownTimer==null){
-    startCountdown();
+// 🎇 Particles
+function spawnParticles(x,y,count){
+  for(let i=0;i<count;i++){
+    let p=document.createElement("div");
+    p.className="particle";
+    p.style.left=x+"px";
+    p.style.top=y+"px";
+    p.style.background=`hsl(${Math.random()*360},100%,50%)`;
+    gameArea.appendChild(p);
+
+    let angle=Math.random()*2*Math.PI;
+    let speed=Math.random()*5+2;
+    let vx=Math.cos(angle)*speed;
+    let vy=Math.sin(angle)*speed;
+
+    let lifetime=0;
+    let interval=setInterval(()=>{
+      lifetime++;
+      p.style.left=(parseFloat(p.style.left)+vx)+"px";
+      p.style.top=(parseFloat(p.style.top)+vy)+"px";
+      if(lifetime>20){
+        clearInterval(interval);
+        p.remove();
+      }
+    },30);
   }
 }
 
-function startCountdown(){
-  countdown=10;
-  timerText.innerText="Timer: "+countdown;
-  countdownTimer=setInterval(()=>{
-    countdown--;
-    timerText.innerText="Timer: "+countdown;
-    if(countdown<=0) endGame();
-  },1000);
-}
-
-function stopCountdown(){
-  clearInterval(countdownTimer);
-  countdownTimer=null;
-  timerText.innerText="Timer: --";
+// 💥 Screenshake
+function screenshake(){
+  let i=0;
+  let interval=setInterval(()=>{
+    i++;
+    document.body.style.transform=`translate(${(Math.random()-0.5)*10}px, ${(Math.random()-0.5)*10}px)`;
+    if(i>10){
+      clearInterval(interval);
+      document.body.style.transform=`translate(0,0)`;
+    }
+  },30);
 }
 
 function endGame(){
-  clearInterval(spawnTimer);
-  stopCountdown();
-  gameOverScreen.style.display="flex";
+  push(ref(db,"scores"),{
+    name:playerName,
+    score:score
+  });
+  gameOver.style.display="flex";
 }
 
-restartBtn.onclick=function(){
-  gameOverScreen.style.display="none";
-  activeBrainrots.forEach(b=>b.remove());
-  activeBrainrots=[];
-  score=0;
-  scoreText.innerText=score;
-  spawnInterval=2000;
-  startSpawning();
-}
+// 🔥 Realtime Top 10
+onValue(ref(db,"scores"),snap=>{
+  leaderList.innerHTML="";
+  let arr=[];
+  snap.forEach(s=>arr.push(s.val()));
+  arr.sort((a,b)=>b.score-b.score);
+  arr=arr.slice(0,10);
+  arr.forEach((p,i)=>{
+    let li=document.createElement("li");
+    li.innerText=`${p.name} - ${p.score}`;
+    if(i==0) li.style.color="gold";
+    if(i==1) li.style.color="silver";
+    if(i==2) li.style.color="#cd7f32";
+    leaderList.appendChild(li);
+  });
+});
 
-startSpawning();
+leaderboardBtn.onclick=()=>leaderboard.style.display="block";
+closeLB.onclick=()=>leaderboard.style.display="none";
+restartBtn.onclick=()=>location.reload();
