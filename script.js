@@ -1,50 +1,31 @@
-const brainrots = [
-  "🧌 Skibidi",
-  "😈 Ohio Final Boss",
-  "🤡 Fanum Tax",
-  "👁️ Gyatt",
-  "🐺 Alpha",
-  "🔥 Rizzler",
-  "💀 Nah Bro",
-  "👹 Grimace Shake",
-  "🦍 Sigma"
-];
-
-const voiceLines = [
-  "brr brr skibidi gyatt",
-  "nah bro what",
-  "ohio moment",
-  "GYATTT",
-  "fanum taxed",
-  "sigma detected",
-  "brainrot overload"
-];
+const brainrots = ["🧌 Skibidi","😈 Ohio","🤡 Fanum","👁️ Gyatt","🐺 Alpha","🔥 Rizzler","💀 Nah","👹 Grimace","🦍 Sigma"];
+const voiceLines = ["brr brr skibidi","GYATT","nah bro","fanum taxed","sigma moment"];
 
 const gameArea = document.getElementById("gameArea");
 const scoreText = document.getElementById("score");
+const timerText = document.getElementById("timer");
 const music = document.getElementById("bgMusic");
 const clickSound = document.getElementById("clickSound");
 const gameOverScreen = document.getElementById("gameOver");
 const restartBtn = document.getElementById("restartBtn");
 
-music.volume = 0.3;
-
 let score = 0;
-let brainrotSpeed = 1;
-let spawnInterval = 2000; // starter 2 sek
+let spawnInterval = 2000;
 let spawnTimer;
-let countdownTimer;
 let countdown = 10;
+let countdownTimer = null;
 let activeBrainrots = [];
 
-music.play(); // start musik automatisk
+// Musik starter ved første klik på siden
+document.body.addEventListener("click", () => {
+  if(music.paused) music.play();
+},{once:true});
 
-// Spawn brainrots automatisk
-function startSpawning() {
-  spawnTimer = setInterval(() => {
+// Spawn loop
+function startSpawning(){
+  spawnTimer = setInterval(()=>{
     spawnBrainrot();
-    // Accelerer spawn rate
-    if (spawnInterval > 300) {
+    if(spawnInterval > 400){
       spawnInterval -= 20;
       clearInterval(spawnTimer);
       startSpawning();
@@ -52,114 +33,97 @@ function startSpawning() {
   }, spawnInterval);
 }
 
-// Brainrot spawn funktion
-function spawnBrainrot() {
-  const brainrot = document.createElement("div");
-  brainrot.className = "brainrot";
+function spawnBrainrot(){
+  const b = document.createElement("div");
+  b.className = "brainrot";
 
-  const randomText = brainrots[Math.floor(Math.random() * brainrots.length)];
-  brainrot.innerText = randomText;
+  const txt = brainrots[Math.floor(Math.random()*brainrots.length)];
+  b.innerText = txt;
 
-  let x = Math.random() * (gameArea.clientWidth - 120);
-  let y = Math.random() * (gameArea.clientHeight - 60);
-  brainrot.style.left = x + "px";
-  brainrot.style.top = y + "px";
+  let x = Math.random()*(gameArea.clientWidth-120);
+  let y = Math.random()*(gameArea.clientHeight-60);
+  b.style.left = x+"px";
+  b.style.top = y+"px";
 
-  const isEvil = Math.random() < 0.05;
-  if (isEvil) {
-    brainrot.classList.add("evil");
-    brainrot.innerText = "😈 EVIL " + randomText;
+  const isEvil = Math.random()<0.05;
+  if(isEvil){
+    b.classList.add("evil");
+    b.innerText = "😈 EVIL "+txt;
   }
 
-  // Bevæg brainrot
-  let dx = (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random());
-  let dy = (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random());
-  let rotation = 0;
+  let dx=(Math.random()<0.5?-1:1)*(1+Math.random());
+  let dy=(Math.random()<0.5?-1:1)*(1+Math.random());
+  let rot=0;
 
-  function move() {
-    x += dx * brainrotSpeed;
-    y += dy * brainrotSpeed;
-    rotation += dx * 2;
-
+  function move(){
+    x+=dx; y+=dy; rot+=dx*2;
     if(x<0||x>gameArea.clientWidth-120) dx*=-1;
     if(y<0||y>gameArea.clientHeight-60) dy*=-1;
-
-    brainrot.style.left = x+"px";
-    brainrot.style.top = y+"px";
-    brainrot.style.transform = `rotate(${rotation}deg)`;
-
+    b.style.left=x+"px";
+    b.style.top=y+"px";
+    b.style.transform=`rotate(${rot}deg)`;
     requestAnimationFrame(move);
   }
   move();
 
-  // klik brainrot
-  brainrot.onclick = function() {
+  b.onclick=function(){
     clickSound.currentTime=0;
     clickSound.play();
 
-    const voice = voiceLines[Math.floor(Math.random()*voiceLines.length)];
-    const msg = document.createElement("div");
-    msg.className = "voiceLine";
-    msg.innerText = voice;
-    msg.style.left = x+"px";
-    msg.style.top = (y-30)+"px";
-    gameArea.appendChild(msg);
-    setTimeout(()=>msg.remove(),1000);
+    const v=document.createElement("div");
+    v.className="voiceLine";
+    v.innerText=voiceLines[Math.floor(Math.random()*voiceLines.length)];
+    v.style.left=x+"px";
+    v.style.top=(y-25)+"px";
+    gameArea.appendChild(v);
+    setTimeout(()=>v.remove(),1000);
 
-    score += isEvil?10:5;
-    scoreText.innerText = score;
+    score+=isEvil?10:5;
+    scoreText.innerText=score;
 
-    // Baggrunds farver
-    const colors=["#ffffff","#f0f8ff","#ffe4e1","#fafad2","#d3ffce","#ffe0f0","#f0ffe0"];
-    document.body.style.backgroundColor = colors[Math.floor(score/10)%colors.length];
+    b.remove();
+    activeBrainrots=activeBrainrots.filter(o=>o!==b);
 
-    // Fjern brainrot og fra active liste
-    brainrot.remove();
-    activeBrainrots = activeBrainrots.filter(b=>b!==brainrot);
-
-    // Stop countdown hvis alle brainrots er væk
-    if(activeBrainrots.length===0) stopCountdown();
+    if(activeBrainrots.length<=3) stopCountdown();
   };
 
-  gameArea.appendChild(brainrot);
-  activeBrainrots.push(brainrot);
+  gameArea.appendChild(b);
+  activeBrainrots.push(b);
 
-  // Hvis der er brainrots på skærmen, start countdown
-  if(countdownTimer==null) startCountdown();
+  if(activeBrainrots.length>3 && countdownTimer==null){
+    startCountdown();
+  }
 }
 
-// Countdown hvis brainrots ikke bliver klikket
-function startCountdown() {
-  countdown = 10;
-  countdownTimer = setInterval(()=>{
+function startCountdown(){
+  countdown=10;
+  timerText.innerText="Timer: "+countdown;
+  countdownTimer=setInterval(()=>{
     countdown--;
-    if(countdown<=0){
-      endGame();
-    }
+    timerText.innerText="Timer: "+countdown;
+    if(countdown<=0) endGame();
   },1000);
 }
 
-function stopCountdown() {
+function stopCountdown(){
   clearInterval(countdownTimer);
   countdownTimer=null;
+  timerText.innerText="Timer: --";
 }
 
-// Game over
-function endGame() {
+function endGame(){
   clearInterval(spawnTimer);
   stopCountdown();
   gameOverScreen.style.display="flex";
 }
 
-// Restart
-restartBtn.onclick = function(){
+restartBtn.onclick=function(){
   gameOverScreen.style.display="none";
   activeBrainrots.forEach(b=>b.remove());
   activeBrainrots=[];
   score=0;
   scoreText.innerText=score;
   spawnInterval=2000;
-  brainrotSpeed=1;
   startSpawning();
 }
 
