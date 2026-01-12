@@ -1,15 +1,9 @@
 body{
 text-align:center;
 font-family:Arial;
-animation:bg 1s infinite;
-}
-
-@keyframes bg{
-0%{background:red;}
-25%{background:yellow;}
-50%{background:cyan;}
-75%{background:lime;}
-100%{background:red;}
+background:black;
+color:white;
+transition: transform 0.1s;
 }
 
 #scoreBox{
@@ -30,13 +24,13 @@ animation:rainbow 2s linear infinite;
 #gameArea{
 height:400px;
 position:relative;
+overflow:hidden;
 }
 
 .brainrot{
 position:absolute;
 font-size:40px;
 cursor:pointer;
-animation:blink 1s infinite;
 }
 
 .boss{
@@ -44,8 +38,12 @@ font-size:70px;
 color:red;
 }
 
-@keyframes blink{
-50%{opacity:0.3;}
+.particle{
+position:absolute;
+width:8px;
+height:8px;
+border-radius:50%;
+pointer-events:none;
 }
 
 #leaderboard{
@@ -55,6 +53,7 @@ top:50%;
 left:50%;
 transform:translate(-50%,-50%);
 background:white;
+color:black;
 padding:20px;
 z-index:999;
 }
@@ -63,28 +62,20 @@ z-index:999;
 #leaderboard li:nth-child(2){color:silver;}
 #leaderboard li:nth-child(3){color:#cd7f32;}
 
+#nameScreen{
+position:fixed;
+top:0;left:0;width:100%;height:100%;
+background:black;color:white;
+display:flex;flex-direction:column;
+justify-content:center;align-items:center;
+}
+
 #gameOver{
 display:none;
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-color:white;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-}
-
-#nameScreen{
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:black;
-color:white;
+top:0;left:0;width:100%;height:100%;
+background:black;color:white;
 display:flex;
+justify-content:center;align-items:center;
 flex-direction:column;
-justify-content:center;
-align-items:center;
 }
