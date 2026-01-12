@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ElliBelli Extreme</title>
+  <title>ElliBelli Extreme Auto</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <h1>ElliBelli Extreme 🧠</h1>
-  <p>Click the brainrots before chaos consumes you!</p>
+  <p>Brainrots spawner automatisk!</p>
 
   <h2>Score: <span id="score">0</span></h2>
 
-  <button id="spawnBtn">Spawn Brainrot</button>
-
   <div id="gameArea"></div>
+
+  <!-- Game Over Screen -->
+  <div id="gameOver" style="display:none;">
+    <h1>Brother Noah du blev slimed 😈</h1>
+    <button id="restartBtn">Restart</button>
+  </div>
 
   <!-- Background music -->
   <audio id="bgMusic" loop>
