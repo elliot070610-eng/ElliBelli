@@ -2,7 +2,7 @@ body {
   background: white;
   text-align: center;
   font-family: Arial, sans-serif;
-  transition: background-color 0.5s; /* Glidende farveskift */
+  transition: background-color 0.5s;
 }
 
 h1 {
@@ -20,19 +20,22 @@ h1 {
   position: relative;
   width: 100%;
   height: 400px;
+  overflow: hidden;
 }
 
+/* Brainrot styles */
 .brainrot {
   position: absolute;
   font-size: 40px;
   cursor: pointer;
   user-select: none;
   animation: blink 1s infinite;
+  transform-origin: center center;
 }
 
 .evil {
   color: red;
-  animation: shake 0.2s infinite, blink 1s infinite;
+  animation: shake 0.2s infinite, blink 0.5s infinite;
 }
 
 @keyframes shake {
