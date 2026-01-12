@@ -1,14 +1,12 @@
-﻿body {
+body {
   background: white;
   text-align: center;
   font-family: Arial, sans-serif;
 }
 
-
 h1 {
   font-size: 48px;
 }
-
 
 #spawnBtn {
   padding: 12px 25px;
@@ -17,13 +15,11 @@ h1 {
   margin-bottom: 20px;
 }
 
-
 #gameArea {
   position: relative;
   width: 100%;
   height: 400px;
 }
-
 
 .brainrot {
   position: absolute;
@@ -32,12 +28,10 @@ h1 {
   user-select: none;
 }
 
-
 .evil {
   color: red;
   animation: shake 0.2s infinite;
 }
-
 
 @keyframes shake {
   0% { transform: translate(0,0); }
@@ -46,7 +40,6 @@ h1 {
   75% { transform: translate(2px,-2px); }
   100% { transform: translate(0,0); }
 }
-
 
 /* Voice line style */
 .voiceLine {
