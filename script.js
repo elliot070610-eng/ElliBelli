@@ -7,7 +7,7 @@ const firebaseConfig = {
   authDomain: "ellibelligame.firebaseapp.com",
   databaseURL: "https://ellibelligame-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "ellibelligame",
-  storageBucket: "ellibelligame.firebasestorage.app",
+  storageBucket: "ellibelligame.firebasedatabase.app",
   messagingSenderId: "90652680256",
   appId: "1:90652680256:web:64d24715523b3601567fa5"
 };
@@ -35,7 +35,11 @@ const clickSound=document.getElementById("clickSound");
 
 let score=0;
 let playerName="";
+let activeBrainrots = 0;
+let timerStarted = false;
+let countdownInterval;
 
+// Start game
 startBtn.onclick=()=>{
   if(nameInput.value.trim()=="") return;
   playerName=nameInput.value;
@@ -47,10 +51,11 @@ startBtn.onclick=()=>{
 
 function startGame(){
   setInterval(spawnBrainrot,1000);
-  setTimeout(endGame,30000);
 }
 
+// Spawn brainrot
 function spawnBrainrot(){
+  activeBrainrots++;
   let b=document.createElement("div");
   let boss=Math.random()<0.05;
   b.className=boss?"brainrot boss":"brainrot";
@@ -62,21 +67,55 @@ function spawnBrainrot(){
   b.style.top=y+"px";
 
   b.onclick=()=>{
-    clickSound.currentTime=0;
-    clickSound.play();
-    score+=boss?50:5;
-    scoreText.innerText=score;
+    score += boss?50:5;
+    scoreText.innerText = score;
 
     spawnParticles(x+20,y+20, boss?20:10);
     if(boss) screenshake();
 
     b.remove();
+    activeBrainrots--;
+
+    if(activeBrainrots < 3 && timerStarted){
+      clearInterval(countdownInterval);
+      timerStarted = false;
+    }
   };
 
   gameArea.appendChild(b);
+
+  // Start 5s timer check if more than 3 brainrots
+  if(activeBrainrots > 3 && !timerStarted){
+    timerStarted = true;
+    setTimeout(()=>{
+      if(activeBrainrots > 3){
+        startCountdown(10);
+      } else {
+        timerStarted = false;
+      }
+    },5000);
+  }
 }
 
-// 🎇 Particles
+// Countdown timer
+function startCountdown(seconds){
+  let timeLeft = seconds;
+  countdownInterval = setInterval(()=>{
+    timeLeft--;
+    scoreText.innerText = `Score: ${score} (${timeLeft})`;
+    if(timeLeft <= 0){
+      clearInterval(countdownInterval);
+      endGame();
+    }
+    if(activeBrainrots < 3){
+      clearInterval(countdownInterval);
+      timerStarted = false;
+      scoreText.innerText = `Score: ${score}`;
+    }
+  },1000);
+}
+
+// Particles
 function spawnParticles(x,y,count){
   for(let i=0;i<count;i++){
     let p=document.createElement("div");
@@ -104,7 +143,7 @@ function spawnParticles(x,y,count){
   }
 }
 
-// 💥 Screenshake
+// Screenshake
 function screenshake(){
   let i=0;
   let interval=setInterval(()=>{
@@ -117,6 +156,7 @@ function screenshake(){
   },30);
 }
 
+// End game
 function endGame(){
   push(ref(db,"scores"),{
     name:playerName,
@@ -125,7 +165,7 @@ function endGame(){
   gameOver.style.display="flex";
 }
 
-// 🔥 Realtime Top 10
+// Realtime leaderboard top 10
 onValue(ref(db,"scores"),snap=>{
   leaderList.innerHTML="";
   let arr=[];
