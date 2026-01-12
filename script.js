@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-// 🔥 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyD4a5ennKqkdpq2b-pHp5zVySk7XKq_pBM",
   authDomain: "ellibelligame.firebaseapp.com",
@@ -15,15 +14,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// UI
 const gameArea=document.getElementById("gameArea");
 const scoreText=document.getElementById("score");
 const leaderboardBtn=document.getElementById("leaderboardBtn");
 const leaderboard=document.getElementById("leaderboard");
 const leaderList=document.getElementById("leaderList");
 const closeLB=document.getElementById("closeLB");
-const gameOver=document.getElementById("gameOver");
-const restartBtn=document.getElementById("restartBtn");
 
 const nameScreen=document.getElementById("nameScreen");
 const gameUI=document.getElementById("gameUI");
@@ -35,27 +31,17 @@ const clickSound=document.getElementById("clickSound");
 
 let score=0;
 let playerName="";
-let activeBrainrots = 0;
-let timerStarted = false;
-let countdownInterval;
 
-// Start game
 startBtn.onclick=()=>{
   if(nameInput.value.trim()=="") return;
   playerName=nameInput.value;
   nameScreen.style.display="none";
   gameUI.style.display="block";
   music.play();
-  startGame();
+  setInterval(spawnBrainrot,1000);
 };
 
-function startGame(){
-  setInterval(spawnBrainrot,1000);
-}
-
-// Spawn brainrot
 function spawnBrainrot(){
-  activeBrainrots++;
   let b=document.createElement("div");
   let boss=Math.random()<0.05;
   b.className=boss?"brainrot boss":"brainrot";
@@ -67,56 +53,21 @@ function spawnBrainrot(){
   b.style.top=y+"px";
 
   b.onclick=()=>{
-    score += boss?50:5;
-    scoreText.innerText = score;
+    clickSound.currentTime=0;
+    clickSound.play();
+    score+=boss?50:5;
+    scoreText.innerText=score;
 
     spawnParticles(x+20,y+20, boss?20:10);
     if(boss) screenshake();
 
     b.remove();
-    activeBrainrots--;
-
-    if(activeBrainrots < 3 && timerStarted){
-      clearInterval(countdownInterval);
-      timerStarted = false;
-      scoreText.innerText = `Score: ${score}`;
-    }
   };
 
   gameArea.appendChild(b);
-
-  // Start 5s timer check if more than 3 brainrots
-  if(activeBrainrots > 3 && !timerStarted){
-    timerStarted = true;
-    setTimeout(()=>{
-      if(activeBrainrots > 3){
-        startCountdown(10);
-      } else {
-        timerStarted = false;
-      }
-    },5000);
-  }
 }
 
-// Countdown timer
-function startCountdown(seconds){
-  let timeLeft = seconds;
-  countdownInterval = setInterval(()=>{
-    timeLeft--;
-    scoreText.innerText = `Score: ${score} (${timeLeft})`;
-    if(timeLeft <= 0){
-      clearInterval(countdownInterval);
-      endGame();
-    }
-    if(activeBrainrots < 3){
-      clearInterval(countdownInterval);
-      timerStarted = false;
-      scoreText.innerText = `Score: ${score}`;
-    }
-  },1000);
-}
-
-// Particles
+// particles
 function spawnParticles(x,y,count){
   for(let i=0;i<count;i++){
     let p=document.createElement("div");
@@ -128,15 +79,16 @@ function spawnParticles(x,y,count){
 
     let angle=Math.random()*2*Math.PI;
     let speed=Math.random()*5+2;
+
     let vx=Math.cos(angle)*speed;
     let vy=Math.sin(angle)*speed;
 
-    let lifetime=0;
+    let life=0;
     let interval=setInterval(()=>{
-      lifetime++;
+      life++;
       p.style.left=(parseFloat(p.style.left)+vx)+"px";
       p.style.top=(parseFloat(p.style.top)+vy)+"px";
-      if(lifetime>20){
+      if(life>20){
         clearInterval(interval);
         p.remove();
       }
@@ -144,7 +96,7 @@ function spawnParticles(x,y,count){
   }
 }
 
-// Screenshake
+// screenshake
 function screenshake(){
   let i=0;
   let interval=setInterval(()=>{
@@ -152,26 +104,27 @@ function screenshake(){
     document.body.style.transform=`translate(${(Math.random()-0.5)*10}px, ${(Math.random()-0.5)*10}px)`;
     if(i>10){
       clearInterval(interval);
-      document.body.style.transform=`translate(0,0)`;
+      document.body.style.transform="translate(0,0)";
     }
   },30);
 }
 
-// End game
-function endGame(){
-  push(ref(db,"scores"),{
-    name:playerName,
-    score:score
-  });
-  gameOver.style.display="flex";
-}
+// leaderboard save every 10 points
+setInterval(()=>{
+  if(score>0){
+    push(ref(db,"scores"),{
+      name:playerName,
+      score:score
+    });
+  }
+},15000);
 
-// Realtime leaderboard top 10
+// realtime leaderboard
 onValue(ref(db,"scores"),snap=>{
   leaderList.innerHTML="";
   let arr=[];
   snap.forEach(s=>arr.push(s.val()));
-  arr.sort((a,b)=>b.score-b.score);
+  arr.sort((a,b)=>b.score-a.score);
   arr=arr.slice(0,10);
   arr.forEach((p,i)=>{
     let li=document.createElement("li");
@@ -185,4 +138,3 @@ onValue(ref(db,"scores"),snap=>{
 
 leaderboardBtn.onclick=()=>leaderboard.style.display="block";
 closeLB.onclick=()=>leaderboard.style.display="none";
-restartBtn.onclick=()=>location.reload();
